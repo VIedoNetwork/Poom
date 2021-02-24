@@ -20,7 +20,7 @@ export default function homeScreen({navigation}) {
       <FilledButton
         title={'Student Score'}
         style={styles.loginButton}
-        onPress={() => navigation.navigate('Taketest')}
+        onPress={() => navigation.navigate('studentScore')}
       />
       <FilledButton
         title={'Logout'}

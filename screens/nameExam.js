@@ -14,7 +14,7 @@ const editSubject = () => {
     Alert.alert(subject)
 }
 
-class addSubject extends Component {
+class exam extends Component {
 
     constructor() {
         super();
@@ -27,39 +27,36 @@ class addSubject extends Component {
       return (
         <ScrollView>
           <View style={styles.container}>
+
+            <Text>
+              Exame 1
+            </Text>
+
+            {/* <Input
+                placeholder="Question"
+                leftIcon={{ type: 'font-awesome', name: 'book' }}
+                style={styles}
+                // value={this.subject}
+                // onChangeText={(val) => editSubject}
+            /> */}
             
-            <FilledButton 
-                title='SUBJECT 1'
+            <Button 
+                title='Exame'
                 style={styles.loginButton} 
-                onPress={() => this.props.navigation.navigate('MakeQuestion')}
+                onPress={() => this.props.navigation.navigate('ExameTest')}
                 // onPress={editSubject}
             />
-            <FilledButton 
-                title='SUBJECT 2'
+
+            <Text>
+              Exame 2
+            </Text>
+            <Button 
+                title='Exame'
                 style={styles.loginButton} 
-                onPress={() => this.props.navigation.navigate('MakeQuestion')}
-                // onPress={editSubject}
-            />
-            <FilledButton 
-                title='SUBJECT 3'
-                style={styles.loginButton} 
-                onPress={() => this.props.navigation.navigate('MakeQuestion')}
-                // onPress={editSubject}
-            />
-            <FilledButton 
-                title='SUBJECT 4'
-                style={styles.loginButton} 
-                onPress={() => this.props.navigation.navigate('MakeQuestion')}
-                // onPress={editSubject}
-            />
-            <FilledButton 
-                title='SUBJECT 5'
-                style={styles.loginButton} 
-                onPress={() => this.props.navigation.navigate('MakeQuestion')}
-                // onPress={editSubject}
             />
             
-            <FilledButton title={'Logout'} style={styles.loginButton} onPress={()=> logout()} />      
+            <FilledButton title={'Logout'} style={styles.loginButton} onPress={()=> logout()} />   
+
           </View>
         </ScrollView>
       )
@@ -91,4 +88,4 @@ const styles = StyleSheet.create({
     }
   });
 
-  export default addSubject;
+  export default exam;

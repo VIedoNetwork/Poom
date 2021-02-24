@@ -1,110 +1,117 @@
 import * as React from 'react';
 import { useContext, Component} from 'react'
-import {View, StyleSheet, Text} from 'react-native';
+import {View, StyleSheet, Text, Button} from 'react-native';
 import {FilledButton} from '../components/FilledButton';
 import { AuthContext } from '../navigaiton/AuthProvider';
 import firestore from '@react-native-firebase/firestore';
 import { Input, ListItem } from 'react-native-elements';
-import { ScrollView } from 'react-native-gesture-handler';
 
 
-class addData extends Component {
+let arrayDictStudents = [];
 
-  constructor() {
-    super();
-    this.usersCollectionRef = firestore().collection('k');
+
+function checkID (examName , score){ // ********** Check if exam score is valid (not null)
+  if (score != null){
+    return "\t\t" + examName + "\t\t"+ score + "\n"
+  } 
+  return ""
+}
+
+function countExam (eachStudentDict){
+  let temp = "";
+  let keys = Object.keys(eachStudentDict);
+  keys.splice(0,1);   // remove the key ("name")
+
+  console.log(keys);
+  for (var i = 0; i < keys.length/2 ; i++){
+    temp += checkID(eachStudentDict[keys[i*2]] , eachStudentDict[keys[i*2+1]]) // cradit Dome
+  }
+  
+  return temp;
+}
+
+Object.size = function(obj) {   // ********** count element in dict (student : arrayDictStudents)
+  var size = 0,
+    key;
+  for (key in obj) {
+    if (obj.hasOwnProperty(key)) size++;
+  }
+  return size;
+}
+
+class StudentTakeTest extends React.Component {
+  constructor(props) {
+    super(props);
+    this.fireStoreData = firestore().collection("question1");
     this.state = {
-      question: "",
-      choice1: "",
-      choice2: "",
-      choice3: "",
-      choice4:""
+      students : arrayDictStudents,
+      userArr: []
     }
-
-}
-
-   inputValueUpdate = (val, prop) => {
-    const state = this.state;
-    state[prop] = val;
-    this.setState(state);
-}
-
- storeUser() {
-        this.usersCollectionRef.add({
-          question: this.state.question,
-          choice1: this.state.choice1,
-          choice2: this.state.choice2,
-          choice3: this.state.choice3,
-          choice4: this.state.choice4
-        }).then((res) => {
-            this.setState({
-                question: '',
-                choice1: '',
-                choice2: '',
-                choice3: '',
-                choice4: ''
-            })
-        })
-        .catch((err) => {
-            console.log('Error found: ', err);
-            this.setState({
-                isLoading: false
-            })
-        })
-    }
-    render (){
-      return (
-        <ScrollView>
-          <View style={styles.container}>
-
-
-   <Input
-     placeholder="Question"
-     leftIcon={{ type: 'font-awesome', name: 'book' }}
-     style={styles}
-     value={this.state.question}
-     onChangeText={(val) => this.inputValueUpdate(val, 'question')}
-    />
-    <Input
-     placeholder="Choice 1"
-     leftIcon={{ type: 'font-awesome', name: 'caret-right' }}
-     style={styles}
-     value={this.state.choice1}
-     onChangeText={(val) => this.inputValueUpdate(val, 'choice1')}
-    />
-    <Input
-     placeholder="Choice 2"
-     leftIcon={{ type: 'font-awesome', name: 'caret-right' }}
-     style={styles}
-     value={this.state.choice2}
-     onChangeText={(val) => this.inputValueUpdate(val, 'choice2')}
-    />
-    <Input
-     placeholder="Choice 3"
-     leftIcon={{ type: 'font-awesome', name: 'caret-right' }}
-     style={styles}
-     value={this.state.choice3}
-     onChangeText={(val) => this.inputValueUpdate(val, 'choice3')}
-    />
-
-    <Input
-     placeholder="Choice 4"
-     leftIcon={{ type: 'font-awesome', name: 'caret-right' }}
-     style={styles}
-     value={this.state.choice4}
-     onChangeText={(val) => this.inputValueUpdate(val, 'choice4')}
-    />
-    
-              <FilledButton title={'ADD QUESTION'} style={styles.loginButton} onPress={() => this.storeUser()} />
-              <FilledButton title={'Logout'} style={styles.loginButton} onPress={()=> logout()} />      
-           </View>
-           </ScrollView>
-      )
-    }
-
   }
 
 
+  componentDidMount() {
+    this.unsubscribe = this.fireStoreData.onSnapshot(this.getCollection);
+  }
+
+  componentWillUnmount(){
+    this.unsubscribe();
+  }
+  getCollection = (querySnapshot) => {
+    const userArr = [];
+    querySnapshot.forEach((res) => {
+      const {ans, choice1, choice2, choice3, choice4, question} = res.data();
+      userArr.push({
+        key: res.id,
+        res,
+        ans,
+        choice1,
+        choice2,
+        choice3,
+        choice4,
+        question
+      })
+    })
+    this.setState({
+      userArr
+    })
+  }
+
+  render() {
+    
+    {
+      this.state.userArr.map((item, i) => {
+        arrayDictStudents.push({
+              ans: item.ans,
+              choice1: item.choice1,
+              choice2: item.choice2,
+              choice3: item.choice3,
+              choice4: item.choice4,
+              question: item.question
+            }
+            )
+
+      })
+      console.log(arrayDictStudents);
+    }
+
+    return (
+      <View>
+        {this.state.students.map(eachStudent => (
+          <Text>
+            {eachStudent.question + "\n" /* Display each student name*/}
+            {eachStudent.choice1 + "\n" /* Display each student name*/}
+            {eachStudent.choice2 + "\n" /* Display each student name*/}
+            {eachStudent.choice3 + "\n" /* Display each student name*/}
+            {eachStudent.choice4 + "\n" /* Display each student name*/}
+            {eachStudent.ans + "\n" /* Display each student name*/}
+          </Text>
+
+        ))}
+      </View>
+    );
+  }
+}
 
 
 const styles = StyleSheet.create({
@@ -129,4 +136,6 @@ const styles = StyleSheet.create({
   
     }
   });
-  export default addData;
+
+
+  export default StudentTakeTest;
